@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, Calendar, Camera, TrendingUp, User, ChevronRight, ChevronLeft, Bell, Sparkles, Check, Upload } from 'lucide-react';
+import { Home, Calendar, Camera, TrendingUp, User, ChevronRight, ChevronLeft, Bell, Sparkles, Check, Upload, X } from 'lucide-react';
 
 const OwnerAppPrototype = () => {
 const [isOpen, setIsOpen] = useState(true);
@@ -14,6 +14,9 @@ const [uploadedClothes, setUploadedClothes] = useState([false, false, false, fal
 const [isGenerating, setIsGenerating] = useState(false);
 const [generatedModels, setGeneratedModels] = useState([false, false, false]);
 const [selectedModel, setSelectedModel] = useState(null);
+const [showPhotoGuide, setShowPhotoGuide] = useState(false);
+const [showPromoButtons, setShowPromoButtons] = useState(true);
+const [showPromoAlert, setShowPromoAlert] = useState(false);
 
 // 로그인 화면
 const LoginScreen = () => (
@@ -911,6 +914,69 @@ const BookingScreen = () => (
 </div>
 );
 
+// 촬영 가이드 모달
+const PhotoGuideModal = () => (
+  <div
+    className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+    onClick={() => setShowPhotoGuide(false)}
+  >
+    <div
+      className="bg-zinc-900 rounded-2xl max-w-sm w-full overflow-hidden"
+      onClick={(e) => e.stopPropagation()}
+    >
+      {/* 헤더 */}
+      <div className="flex items-center justify-between p-4 border-b border-zinc-800">
+        <div className="text-white font-bold">📸 이렇게 촬영해주세요!</div>
+        <button
+          onClick={() => setShowPhotoGuide(false)}
+          className="text-zinc-400 hover:text-white"
+        >
+          <X size={24} />
+        </button>
+      </div>
+
+      {/* 레퍼런스 이미지 */}
+      <div className="p-4 bg-zinc-800">
+        <img
+          src="/sources/photo_guide.png"
+          alt="촬영 가이드"
+          className="w-full rounded-xl"
+        />
+      </div>
+
+      {/* 안내 문구 */}
+      <div className="p-4 space-y-3">
+        <div className="flex items-start gap-3">
+          <span className="text-green-500">✓</span>
+          <span className="text-zinc-300 text-sm">옷을 바닥에 <span className="text-white font-bold">펼쳐놓고</span> 촬영</span>
+        </div>
+        <div className="flex items-start gap-3">
+          <span className="text-green-500">✓</span>
+          <span className="text-zinc-300 text-sm"><span className="text-white font-bold">밝은 조명</span> 아래에서 촬영</span>
+        </div>
+        <div className="flex items-start gap-3">
+          <span className="text-green-500">✓</span>
+          <span className="text-zinc-300 text-sm">옷 전체가 <span className="text-white font-bold">프레임 안에</span> 들어오게</span>
+        </div>
+        <div className="flex items-start gap-3">
+          <span className="text-red-500">✗</span>
+          <span className="text-zinc-400 text-sm">구겨진 상태, 어두운 곳에서 촬영 금지</span>
+        </div>
+      </div>
+
+      <div className="p-4 pt-0">
+        <button
+          onClick={() => setShowPhotoGuide(false)}
+          className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold"
+        >
+          확인했어요
+        </button>
+      </div>
+    </div>
+  </div>
+);
+
+
 const NewItemScreen = () => (
 <div className="h-full overflow-y-auto pb-24 bg-black">
   {/* 헤더 */}
@@ -956,19 +1022,35 @@ const NewItemScreen = () => (
   <div className="p-5 space-y-6">
     <div>
       <div className="text-white text-2xl font-bold mb-2">옷 사진 촬영</div>
-      <div className="text-zinc-400 text-sm">코디하고 싶은 옷들을 촬영해주세요. AI가 자동으로 모델 착용 사진을 생성해드려요.</div>
+      <div className="text-zinc-400 text-sm">코디하고 싶은 옷들을 촬영해주세요. <span className="text-blue-400 font-bold">AI가 자동으로 모델 착용 사진을 생성</span>해드리고,
+      이를 손님에게 <span className="text-blue-400 font-bold">사장님의 포트폴리오</span>로 보여줘요.</div>
     </div>
 
+    {/* 촬영 가이드 버튼 (새로 추가!) */}
+    <button
+      onClick={() => setShowPhotoGuide(true)}
+      className="w-full bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-4 flex items-center gap-4 hover:from-blue-500 hover:to-blue-600 transition"
+    >
+      <div className="w-16 h-16 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0">
+        <span className="text-3xl">📸</span>
+      </div>
+      <div className="flex-1 text-left">
+        <div className="text-white font-bold mb-1">촬영 가이드 보기</div>
+        <div className="text-blue-200 text-xs">이렇게 찍으면 AI가 더 잘 인식해요!</div>
+      </div>
+      <ChevronRight className="text-blue-300" size={24} />
+    </button>
+
     {/* 안내 카드 */}
-    <div className="bg-blue-950 border border-blue-800 rounded-xl p-4">
+    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
       <div className="flex items-start gap-3">
         <span className="text-2xl">💡</span>
         <div className="text-sm">
-          <div className="text-blue-300 font-semibold mb-1">촬영 TIP</div>
-          <div className="text-blue-200 text-xs space-y-1">
-            <div>• 상의, 하의, 아우터 등 조합할 옷 촬영</div>
-            <div>• 밝은 곳에서 옷 전체가 보이게</div>
-            <div>• 2-4개 아이템 권장</div>
+          <div className="text-white font-semibold mb-2">촬영 TIP</div>
+          <div className="text-zinc-400 text-xs space-y-1.5">
+            <div>• 옷을 <span className="text-blue-400 font-bold">바닥에 펼쳐놓고</span> 위에서 촬영</div>
+            <div>• <span className="text-blue-400 font-bold">밝은 곳</span>에서 옷 전체가 보이게</div>
+            <div>• 상의, 하의, 아우터 등 <span className="text-blue-400 font-bold">2-4개 아이템</span> 권장</div>
           </div>
         </div>
       </div>
@@ -1119,21 +1201,21 @@ className="w-full bg-zinc-900 border border-zinc-700 text-white py-3 rounded-xl 
 🔄 다시 생성하기
 </button>
 
-{/* 선택 완료 버튼 */}
 <button
-        onClick={() => {
-if (selectedModel !== null) {
-setNewItemStep(3);
-}
-}}
-disabled={selectedModel === null}
-className={`w-full py-4 rounded-xl font-bold transition ${
-selectedModel !== null
-? 'bg-blue-600 text-white hover:bg-blue-700'
-: 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
-}`}
+  onClick={() => {
+    if (selectedModel !== null) {
+      setNewItemStep(3);
+      setShowPromoButtons(true);  // 이거 추가!
+    }
+  }}
+  disabled={selectedModel === null}
+  className={`w-full py-4 rounded-xl font-bold transition ${
+    selectedModel !== null
+      ? 'bg-blue-600 text-white hover:bg-blue-700'
+      : 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
+  }`}
 >
-이 사진으로 선택
+  이 사진으로 선택
 </button>
 </>
 )}
@@ -1167,42 +1249,77 @@ selectedModel !== null
     </div>
   </div>
 
-  {/* 예상 효과 */}
+  {/* 홍보 물어보기 */}
   <div className="w-full bg-blue-950 border border-blue-800 rounded-xl p-4 mb-8">
-    <div className="flex items-start gap-3">
-      <span className="text-xl">📈</span>
+    <div className="flex items-start gap-3 mb-3">
+      <span className="text-xl">📢</span>
       <div className="text-sm">
-        <div className="text-blue-300 font-semibold mb-1">예상 효과</div>
+        <div className="text-blue-300 font-semibold mb-1">홍보할까요?</div>
         <div className="text-blue-200 text-xs">
-          이 코디로 약 <span className="font-bold">23명</span>의 고객에게 노출될 예정이에요
+          이 코디로 약 <span className="font-bold">23명</span>의 고객이 구매하거나, 이러한 옷에 호감이 있습니다. 신상 알림을 보낼까요?
         </div>
       </div>
     </div>
+
+    {/* 예/아니오 버튼 */}
+    {showPromoButtons && (
+      <div className="flex gap-2">
+        <button
+          onClick={() => {
+            setShowPromoAlert(true);
+            setShowPromoButtons(false);
+            setTimeout(() => setShowPromoAlert(false), 2000);
+          }}
+          className="flex-1 bg-blue-600 text-white py-2 rounded-lg font-bold text-sm hover:bg-blue-700 transition"
+        >
+          예
+        </button>
+        <button
+          onClick={() => setShowPromoButtons(false)}
+          className="flex-1 bg-zinc-700 text-zinc-300 py-2 rounded-lg font-bold text-sm hover:bg-zinc-600 transition"
+        >
+          아니오
+        </button>
+      </div>
+    )}
   </div>
+
+  {/* 알림 보냈습니다 팝업 */}
+  {showPromoAlert && (
+    <div className="absolute inset-0 flex items-center justify-center z-50">
+      <div className="bg-zinc-800 border border-zinc-700 rounded-2xl p-6 shadow-2xl text-center animate-bounce">
+        <div className="text-4xl mb-3">✅</div>
+        <div className="text-white font-bold">알림을 보냈습니다!</div>
+        <div className="text-zinc-400 text-sm mt-1">23명에게 전송됨</div>
+      </div>
+    </div>
+  )}
 
   <div className="w-full flex gap-3">
     <button
-            onClick={() => {
-    setNewItemStep(1);
-    setUploadedClothes([false, false, false, false]);
-    setGeneratedModels([false, false, false]);
-    setSelectedModel(null);
-    }}
-    className="flex-1 bg-zinc-900 border border-zinc-700 text-white py-4 rounded-xl font-bold hover:bg-zinc-800 transition"
+      onClick={() => {
+        setNewItemStep(1);
+        setUploadedClothes([false, false, false, false]);
+        setGeneratedModels([false, false, false]);
+        setSelectedModel(null);
+        setShowPromoButtons(true);
+      }}
+      className="flex-1 bg-zinc-900 border border-zinc-700 text-white py-4 rounded-xl font-bold hover:bg-zinc-800 transition"
     >
-    하나 더 등록
+      하나 더 등록
     </button>
     <button
-            onClick={() => {
-    setNewItemStep(1);
-    setUploadedClothes([false, false, false, false]);
-    setGeneratedModels([false, false, false]);
-    setSelectedModel(null);
-    setCurrentScreen('home');
-    }}
-    className="flex-1 bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 transition"
+      onClick={() => {
+        setNewItemStep(1);
+        setUploadedClothes([false, false, false, false]);
+        setGeneratedModels([false, false, false]);
+        setSelectedModel(null);
+        setShowPromoButtons(true);
+        setCurrentScreen('home');
+      }}
+      className="flex-1 bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-700 transition"
     >
-    완료
+      완료
     </button>
   </div>
 </div>
@@ -1482,6 +1599,9 @@ return (
     {currentScreen === 'profile' && <ProfileScreen />}
   </div>
   {showNav && <BottomNav />}
+
+  {/* 촬영 가이드 모달 */}
+  {showPhotoGuide && <PhotoGuideModal />}
 </div>
 );
 };
